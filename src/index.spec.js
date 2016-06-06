@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 import { assert } from "chai";
-import aupair from "./index";
+import aupair from "../lib/index";
 
 describe( "au-pair API", () => {
   beforeEach( () => {
@@ -20,8 +20,8 @@ describe( "au-pair API", () => {
 
   describe( "registration", () => {
     it( "should be able to register a configuration", () => {
-      assert.isNotNull( aupair.getRegistrations().healthy );
-      assert.isNotNull( aupair.getRegistrations().unhealthy );
+      assert.isNotNull( aupair.registrations.healthy );
+      assert.isNotNull( aupair.registrations.unhealthy );
     } );
   } );
 
