@@ -6,7 +6,7 @@ export default {
   register( config ) {
     configurations.set( config.name, config );
   },
-  get registrations() {
+  getRegistrations() {
     const obj = Object.create( null );
     for ( const [ key, value ] of configurations ) {
       obj[ key ] = value;

@@ -1,5 +1,4 @@
 /* global testHelpers */
-import "babel-polyfill";
 import chai from "chai";
 import sinon from "sinon";
 import pkg from "../package.json";

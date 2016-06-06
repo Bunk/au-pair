@@ -1,12 +1,10 @@
 /* eslint-env mocha */
 import { assert } from "chai";
+import aupair from "./index";
 
 describe( "au-pair API", () => {
-  let aupair;
-
   beforeEach( () => {
-    aupair = require( "./index.js" );
-    aupair.register( "healthy", {
+    aupair.register( {
       name: "healthy",
       async check() {
         return { healthy: true };
@@ -22,8 +20,8 @@ describe( "au-pair API", () => {
 
   describe( "registration", () => {
     it( "should be able to register a configuration", () => {
-      assert.isNotNull( aupair.registrations.healthy );
-      assert.isNotNull( aupair.registrations.unhealthy );
+      assert.isNotNull( aupair.getRegistrations().healthy );
+      assert.isNotNull( aupair.getRegistrations().unhealthy );
     } );
   } );
 
