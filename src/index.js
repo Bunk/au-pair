@@ -1,9 +1,21 @@
 import _ from "lodash";
 import transforms from "./transforms";
 
+const promisify = async fn => {
+  if ( fn.then ) {
+    return fn();
+  }
+  try {
+    const result = fn();
+    return Promise.resolve( result );
+  } catch ( err ) {
+    return Promise.reject( err );
+  }
+};
+
 class AuPair {
   constructor( registrations ) {
-    this.registrations = registrations;
+    this.registrations = registrations || {};
   }
 
   register( config ) {
@@ -17,9 +29,12 @@ class AuPair {
     }
 
     let checks = regs.map( ( [ key, config ] ) => {
-      // TODO: Support synchronous calls
-      return config.check()
-        .then( result => Object.assign( result, { name: key } ) );
+      if ( !config.check ) {
+        throw new Error( "An AuPair configuration must have a `check` function" );
+      }
+
+      const promise = promisify( config.check );
+      return promise.then( result => Object.assign( result, { name: key } ) );
     } );
 
     return Promise.all( checks )
@@ -27,4 +42,6 @@ class AuPair {
   }
 }
 
-export default new AuPair( {} );
+const defaultInstance = new AuPair();
+
+export default defaultInstance;

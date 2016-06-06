@@ -1,6 +1,6 @@
 {
   "name": "aupair",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "A digital au-pair that monitors the health of your dependents.",
   "keywords": "health, status, check, health check, status check, aupair",
   "repository": {

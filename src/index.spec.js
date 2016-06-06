@@ -1,6 +1,7 @@
 /* eslint-env mocha */
+/* eslint-disable no-magic-numbers */
 import { assert } from "chai";
-import aupair from "../lib/index";
+import aupair from "./index";
 
 describe( "au-pair API", () => {
   beforeEach( () => {
@@ -14,6 +15,12 @@ describe( "au-pair API", () => {
       name: "unhealthy",
       async check() {
         return { healthy: false, timestamp: Date.parse( "11/30/2011" ) };
+      }
+    } );
+    aupair.register( {
+      name: "synchronous",
+      check() {
+        return { healthy: true };
       }
     } );
   } );
@@ -34,24 +41,27 @@ describe( "au-pair API", () => {
       } );
 
       it( "should return each individual result in the details", () => {
-        assert.equal( result.details.length, 2 ); // eslint-disable-line no-magic-numbers
+        assert.equal( result.details.length, 3 );
       } );
 
       it( "should return the correct healthy message", () => {
         assert.isFalse( result.healthy );
         assert.isTrue( result.details[ 0 ].healthy );
         assert.isFalse( result.details[ 1 ].healthy );
+        assert.isTrue( result.details[ 2 ].healthy );
       } );
 
       it( "should return the correct name for each detail", () => {
         assert.equal( result.details[ 0 ].name, "healthy" );
         assert.equal( result.details[ 1 ].name, "unhealthy" );
+        assert.equal( result.details[ 2 ].name, "synchronous" );
       } );
 
       it( "should set timestamps", () => {
         assert.isNotNull( result.timestamp );
         assert.isNotNull( result.details[ 0 ].timestamp );
         assert.equal( result.details[ 1 ].timestamp, Date.parse( "11/30/2011" ) );
+        assert.isNotNull( result.details[ 2 ].timestamp );
       } );
     } );
 
