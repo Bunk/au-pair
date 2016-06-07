@@ -14,7 +14,7 @@ describe( "au-pair API", () => {
     aupair.register( {
       name: "unhealthy",
       async check() {
-        return { healthy: false, timestamp: Date.parse( "11/30/2011" ) };
+        return { healthy: false, timestamp: "11/30/2011" };
       }
     } );
     aupair.register( {
