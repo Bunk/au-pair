@@ -38,7 +38,7 @@ class AuPair {
     } );
 
     return Promise.all( checks )
-      .then( promises => transforms.map( promises ) );
+      .then( results => transforms.map( results ) );
   }
 }
 
