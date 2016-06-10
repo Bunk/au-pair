@@ -1,18 +1,6 @@
 import _ from "lodash";
 import transforms from "./transforms";
 
-const promisify = async fn => {
-  if ( fn.then ) {
-    return fn();
-  }
-  try {
-    const result = fn();
-    return Promise.resolve( result );
-  } catch ( err ) {
-    return Promise.reject( err );
-  }
-};
-
 class AuPair {
   constructor( registrations ) {
     this.registrations = registrations || {};
@@ -33,7 +21,18 @@ class AuPair {
         throw new Error( "An AuPair configuration must have a `check` function" );
       }
 
-      const promise = promisify( config.check );
+      let promise;
+      if ( config.then && _.isFunction( config.then ) ) {
+        promise = config.then;
+      } else {
+        try {
+          const result = config.check();
+          promise = Promise.resolve( result );
+        } catch ( err ) {
+          promise = Promise.reject( err );
+        }
+      }
+
       return promise.then( result => Object.assign( result, { name: key } ) );
     } );
 

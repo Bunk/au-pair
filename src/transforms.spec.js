@@ -8,7 +8,6 @@ function validObj( additional ) {
 }
 
 describe( "Transforms", () => {
-  let result;
   describe( "validations", () => {
     it( "should allow an array of values", () => {
       assert.doesNotThrow( () => transforms.map( [ validObj() ] ) );
