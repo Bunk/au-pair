@@ -15,11 +15,16 @@
     "test": "npm run lint && npm run coverage",
     "test-and-exit": "NODE_ENV=test mocha --compilers js:babel-register -r ./spec-helpers -R spec 'src/**/*.spec.js'",
     "test-watch": "NODE_ENV=test mocha -w --compilers js:babel-register -r ./spec-helpers -R spec 'src/**/*.spec.js'",
-    "coverage": "nyc -r text-summary -r html --require=babel-register -- npm run test-and-exit",
+    "cover": "nyc -r text-summary -r html --require=babel-register -- npm run test-and-exit",
     "show-coverage": "open ./coverage/index.html",
-    "prepublish": "npm run build && npm run coverage"
+    "pretest": "npm run lint",
+    "preversion": "npm run cover",
+    "version": "npm run build",
+    "postversion": "git push && git push --tags",
+    "prepublish": "publish-please guard",
+    "publish-please": "publish-please"
   },
-  "author": "JD Courtoy <jd.courtoy@leankit.com>",
+  "author": "JD Courtoy <jd@courtoy.io>",
   "license": "MIT",
   "devDependencies": {
     "babel-cli": "^6.9.0",
@@ -35,6 +40,7 @@
     "eslint-plugin-babel": "^3.2.0",
     "mocha": "^2.5.3",
     "nyc": "^6.4.4",
+    "publish-please": "^2.3.1",
     "sinon": "^1.17.4",
     "sinon-as-promised": "^4.0.0"
   },
