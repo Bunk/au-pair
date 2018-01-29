@@ -1,8 +1,15 @@
 {
   "name": "aupair",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "description": "A digital au-pair that monitors the health of your dependents.",
-  "keywords": [ "health", "status", "check", "health check", "status check", "healthcheck" ],
+  "keywords": [
+    "health",
+    "status",
+    "check",
+    "health check",
+    "status check",
+    "healthcheck"
+  ],
   "repository": {
     "type": "git",
     "url": "git://github.com/bunk/aupair.git"
