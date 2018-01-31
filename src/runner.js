@@ -16,6 +16,9 @@ module.exports = ({ key = 'default', interval = 5000, check = defaultCheck }) =>
         throw new Error(`Already running a healthcheck for '${key}'`)
       }
 
+      // TODO: If we have a particularly long-running check, we should
+      //       cache it until it's complete instead of generating lots of additional
+      //       checks.
       const tick = () => {
         currentState = { key }
         try {
