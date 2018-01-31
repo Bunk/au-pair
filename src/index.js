@@ -1,46 +1,75 @@
-import _ from 'lodash'
-import transforms from './transforms'
+const runnerFactory = require('./runner')
+const moment = require('moment')
+require('moment-precise-range-plugin')
+
+const started = moment()
 
 class AuPair {
-  constructor (registrations) {
-    this.registrations = registrations || {}
+  constructor () {
+    this.isActive = false
+    this.checks = new Set()
+    this.runners = {}
   }
 
-  register (config) {
-    this.registrations[ config.name ] = config
+  addCheck (...checks) {
+    for (const check of checks) {
+      this.checks.add(check)
+    }
   }
 
-  check (...names) {
-    let regs = _.map(this.registrations, (value, key) => [ key, value ])
-    if (names && names.length) {
-      regs = regs.filter(([ key, config ]) => names.indexOf(key) >= 0)
+  start () {
+    if (this.isActive) {
+      throw new Error('Health checks are already active')
     }
 
-    let checks = regs.map(([ key, config ]) => {
-      if (!config.check) {
-        throw new Error('An AuPair configuration must have a `check` function')
-      }
+    this.isActive = true
 
-      let promise
-      if (config.then && _.isFunction(config.then)) {
-        promise = config.then
-      } else {
-        try {
-          const result = config.check()
-          promise = Promise.resolve(result)
-        } catch (err) {
-          promise = Promise.reject(err)
-        }
-      }
+    for (const check of this.checks) {
+      const runner = (
+        this.runners[check.key] = runnerFactory(check)
+      )
+      runner.start()
+    }
+  }
 
-      return promise.then(result => Object.assign(result, { name: key }))
-    })
+  stop () {
+    if (!this.isActive) return
+    for (const [, runner] of Object.entries(this.runners)) {
+      runner.stop()
+    }
+  }
 
-    return Promise.all(checks)
-      .then(results => transforms.map(results))
+  check () {
+    const state = {
+      status: 'ok',
+      started: started,
+      uptime: moment.preciseDiff(started, moment())
+    }
+
+    let pending = false
+    let failed = false
+
+    for (const [key, runner] of Object.entries(this.runners)) {
+      if (!state.details) state.details = {}
+
+      const { data } = runner.currentState
+      pending |= data.status === 'pending'
+      failed |= data.status === 'failed'
+      state.details[key] = data
+    }
+
+    state.status = failed ? 'failed' : pending ? 'pending' : state.status
+
+    return state
+  }
+
+  reset () {
+    this.stop()
+
+    this.isActive = false
+    this.checks = new Set()
+    this.runners = {}
   }
 }
 
-const defaultInstance = new AuPair()
-
-export default defaultInstance
+module.exports = new AuPair()

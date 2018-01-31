@@ -2,7 +2,6 @@
 import chai from 'chai'
 import sinon from 'sinon'
 import pkg from '../package.json'
-import 'sinon-as-promised'
 
 sinon.assert.expose(chai.assert, { prefix: '' })
 
